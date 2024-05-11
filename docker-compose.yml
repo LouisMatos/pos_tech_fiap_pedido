@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:latest
+    container_name: db_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=db_lanchonete
+    ports:
+      - "5432:5432"
+    networks:
+      - network_postgres
+    volumes:
+      - jlapp:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: web_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "pos@tech.com"
+      PGADMIN_DEFAULT_PASSWORD: "postech123"
+    ports:
+      - "54321:80"
+    networks:
+      - network_postgres
+    depends_on:
+      - postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 128M
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: luis
+      RABBITMQ_DEFAULT_PASS: teste123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+
+volumes:
+  jlapp:
+    driver: local
+
+networks:
+  network_service:
+    driver: bridge
+  network_postgres:
+    driver: bridge

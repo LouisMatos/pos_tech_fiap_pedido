@@ -2,12 +2,14 @@ package br.com.postechfiap.jlapppedido;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"br.com.postechfiap.jlapppedido"})
+@EnableJpaRepositories(basePackages = "br.com.postechfiap.jlapppedido.infra.config.db.repository")
 public class JlappPedidoApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(JlappPedidoApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(JlappPedidoApplication.class, args);
+  }
 
 }
