@@ -147,6 +147,7 @@ public class PedidoUseCase {
   }
 
   public PedidoDTO atualizar(PedidoDTO pedidoDTO, String numeroPedido) {
+
     this.buscaPedidoNumeroPedido(numeroPedido);
 
     log.info("Convertendo para o dominio de Pedido!");
@@ -154,6 +155,24 @@ public class PedidoUseCase {
 
     log.info("Atualizando o pedido de numero: {} !", numeroPedido);
     pedido.setNumeroPedido(numeroPedido);
+
+    PedidoDTO dto = PedidoMapper.toDTO(pedidoGateway.atualizar(pedido));
+    log.info("{} alterado com sucesso!", dto.toString());
+
+    return dto;
+
+  }
+
+  public PedidoDTO atualizarStatusPagamento(String numeroPedido, StatusPagamento statusPagamento) {
+
+    PedidoDTO pedidoDTO = this.buscaPedidoNumeroPedido(numeroPedido);
+
+    log.info("Convertendo para o dominio de Pedido!");
+    Pedido pedido = PedidoMapper.toDomain(pedidoDTO);
+
+    log.info("Atualizando o pedido de numero: {} !", numeroPedido);
+    pedido.setNumeroPedido(numeroPedido);
+    pedido.setStatusPagamento(statusPagamento);
 
     PedidoDTO dto = PedidoMapper.toDTO(pedidoGateway.atualizar(pedido));
     log.info("{} alterado com sucesso!", dto.toString());
