@@ -14,17 +14,9 @@ public class MQConfig {
   @Value("${mq.queues.pedidos}")
   private String pedidoQueue;
 
-  @Value("${mq.queues.cliente}")
-  private String clienteQueue;
-
   @Bean
   public Queue pedidoQueue() {
     return new Queue(pedidoQueue, true);
-  }
-
-  @Bean
-  public Queue clienteQueue() {
-    return new Queue(clienteQueue, true);
   }
 
   @Bean
