@@ -101,8 +101,9 @@ public class PedidoUseCase {
         ItemPedidoMapper.toListDomainFromDTO(itemPedidoUseCase.buscarItemPedido(pedido.getId())));
     log.info("{} salvo com sucesso!", pedido.toString());
 
+
     try {
-      pedidoPublisher.send(pedido);
+      pedidoPublisher.send(PedidoMapper.toEventoPedido(pedido));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }

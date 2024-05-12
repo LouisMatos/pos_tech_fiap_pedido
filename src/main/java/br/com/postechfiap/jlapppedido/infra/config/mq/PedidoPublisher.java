@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import br.com.postechfiap.jlapppedido.domain.pedido.model.EventoPedido;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.Pedido;
 import lombok.RequiredArgsConstructor;
 
@@ -22,10 +23,21 @@ public class PedidoPublisher {
     rabbitTemplate.convertAndSend(pedidoQueue.getName(), json);
   }
 
+  public void send(EventoPedido eventoPedido) throws JsonProcessingException {
+    String json = convertIntoJson(eventoPedido);
+    rabbitTemplate.convertAndSend(pedidoQueue.getName(), json);
+  }
+
   private String convertIntoJson(Pedido pedido) throws JsonProcessingException {
     ObjectMapper mapper = new ObjectMapper();
     mapper.registerModule(new JavaTimeModule());
     return mapper.writeValueAsString(pedido);
+  }
+
+  private String convertIntoJson(EventoPedido eventoPedido) throws JsonProcessingException {
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+    return mapper.writeValueAsString(eventoPedido);
   }
 
 

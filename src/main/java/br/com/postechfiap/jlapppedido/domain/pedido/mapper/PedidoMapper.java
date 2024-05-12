@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import br.com.postechfiap.jlapppedido.domain.cliente.mapper.ClienteMapper;
 import br.com.postechfiap.jlapppedido.domain.pedido.dto.PedidoDTO;
+import br.com.postechfiap.jlapppedido.domain.pedido.model.EventoPedido;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.Pedido;
 import br.com.postechfiap.jlapppedido.infra.config.db.schema.PedidoSchema;
 
@@ -131,5 +132,22 @@ public class PedidoMapper {
 
     return pedido;
   }
+
+
+
+  public static EventoPedido toEventoPedido(Pedido pedido) {
+    EventoPedido eventoPedido = new EventoPedido();
+
+    eventoPedido.setId(pedido.getId());
+    eventoPedido.setNumeroPedido(pedido.getNumeroPedido());
+    eventoPedido.setStatusPagamento(pedido.getStatusPagamento());
+    eventoPedido.setEstado(pedido.getEstado());
+    eventoPedido.setDataPedido(pedido.getDataPedido());
+    eventoPedido.setValorPedido(pedido.getValorPedido());
+
+
+    return eventoPedido;
+  }
+
 
 }
