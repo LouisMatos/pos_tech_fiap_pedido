@@ -74,4 +74,10 @@ spring:
 mq:
   queues:
     pedidos: pedidos-mq
-    cliente: cliente-mq
+    statuspedidos: status-pedidos-mq
+  exchanges:
+    direct: direct-exchange
+  routing:
+    key:
+      pedidos: pedidos-key
+      statuspedidos: status-pedidos-key
