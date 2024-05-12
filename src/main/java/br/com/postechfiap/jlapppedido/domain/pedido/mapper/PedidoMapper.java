@@ -9,10 +9,23 @@ import br.com.postechfiap.jlapppedido.infra.config.db.schema.PedidoSchema;
 
 public class PedidoMapper {
 
-  public static PedidoDTO toDTO(Pedido pedido) {
 
-    return PedidoDTO.builder().build();
+  public static PedidoDTO toDTO(Pedido pedido) {
+    PedidoDTO pedidoDTO = new PedidoDTO();
+    pedidoDTO.setId(pedido.getId());
+    if (pedido.getCliente() != null) {
+      pedidoDTO.setClienteDTO(ClienteMapper.toDTO(pedido.getCliente()));
+    }
+    pedidoDTO.setDataPedido(pedido.getDataPedido());
+    pedidoDTO.setEstado(pedido.getEstado());
+    pedidoDTO.setItemPedidoDTOs(ItemPedidoMapper.toListItemPedidoDTO(pedido.getItens()));
+    pedidoDTO.setNumeroPedido(pedido.getNumeroPedido());
+    pedidoDTO.setStatusPagamento(pedido.getStatusPagamento());
+    pedidoDTO.setValorPedido(pedido.getValorPedido());
+
+    return pedidoDTO;
   }
+
 
   public static List<Pedido> toListDomain(List<PedidoSchema> pedidosSchema) {
     if (pedidosSchema == null || pedidosSchema.isEmpty()) {
