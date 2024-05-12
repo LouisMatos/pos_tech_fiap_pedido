@@ -48,6 +48,12 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+
 
 
 volumes:

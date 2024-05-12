@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import br.com.postechfiap.jlapppedido.domain.cliente.mapper.ClienteMapper;
 import br.com.postechfiap.jlapppedido.domain.enums.Estado;
 import br.com.postechfiap.jlapppedido.domain.enums.StatusPagamento;
 import br.com.postechfiap.jlapppedido.domain.pedido.dto.ItemPedidoDTO;
@@ -15,8 +16,11 @@ import br.com.postechfiap.jlapppedido.domain.pedido.dto.PedidoAcompanhamentoDTO;
 import br.com.postechfiap.jlapppedido.domain.pedido.dto.PedidoDTO;
 import br.com.postechfiap.jlapppedido.domain.pedido.dto.StatusPedidoDTO;
 import br.com.postechfiap.jlapppedido.domain.pedido.gateway.IPedidoGateway;
+import br.com.postechfiap.jlapppedido.domain.pedido.mapper.ItemPedidoMapper;
 import br.com.postechfiap.jlapppedido.domain.pedido.mapper.PedidoMapper;
+import br.com.postechfiap.jlapppedido.domain.pedido.model.ItemPedido;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.Pedido;
+import br.com.postechfiap.jlapppedido.domain.produto.mapper.ProdutoMapper;
 import br.com.postechfiap.jlapppedido.infra.config.mq.PedidoPublisher;
 import br.com.postechfiap.jlapppedido.shared.exception.NotFoundException;
 import br.com.postechfiap.jlapppedido.shared.logger.log.Logger;
@@ -51,42 +55,51 @@ public class PedidoUseCase {
 
   public PedidoDTO inserir(PedidoDTO pedidoDTO) {
 
+    log.info("Convertendo para o dominio de Pedido!");
+    Pedido pedido = PedidoMapper.toDomain(pedidoDTO);
+
     log.info("Verificando se o cliente se indentificou!");
-    if (!pedidoDTO.getClienteDTO().getCpf().isBlank()) {
-      pedidoDTO
-          .setClienteDTO(clienteUseCase.buscarClientePorCpf(pedidoDTO.getClienteDTO().getCpf()));
+    if (!pedido.getCliente().getCpf().isBlank()) {
+      pedido.setCliente(
+          ClienteMapper.toDomain(clienteUseCase.buscarClientePorCpf(pedido.getCliente().getCpf())));
     } else {
-      pedidoDTO.setClienteDTO(null);
+      pedido.setCliente(null);
       log.info("Pedido sem identificação do cliente!");
     }
 
-    pedidoDTO.setEstado(Estado.RECEBIDO);
-    pedidoDTO.setStatusPagamento(StatusPagamento.AGUARDANDO);
-    pedidoDTO.setDataPedido(LocalDateTime.now());
+    pedido.setEstado(Estado.RECEBIDO);
+    pedido.setStatusPagamento(StatusPagamento.AGUARDANDO);
+    pedido.setDataPedido(LocalDateTime.now());
 
-    log.info("Convertendo para o dominio de Pedido!");
-    // pedidoDTO.toPedidoDTO(pedidoGateway.inserir(PedidoMapper.toDomain(pedidoDTO)));
-    pedidoGateway.inserir(PedidoMapper.toDomain(pedidoDTO));
+    log.info("Registrando pedido e gerando id do pedido!");
+    pedido.setId(pedidoGateway.inserir(pedido).getId());
 
     log.info("Processando itens do pedido!");
-    for (int i = 0; i < pedidoDTO.getItemPedidoDTOs().size(); i++) {
-      pedidoDTO.getItemPedidoDTOs().get(i).setProdutoDTO(produtoUseCase
-          .buscarProdutoPorId(pedidoDTO.getItemPedidoDTOs().get(i).getProdutoDTO().getId()));
-      pedidoDTO.getItemPedidoDTOs().get(i).setPedidoid(pedidoDTO.getId());
+    for (int i = 0; i < pedido.getItens().size(); i++) {
+      pedido.getItens().get(i).setProduto(ProdutoMapper.toDomain(
+          produtoUseCase.buscarProdutoPorId(pedido.getItens().get(i).getProduto().getId())));
+      pedido.getItens().get(i).setPedidoid(pedido.getId());
     }
 
     log.info("Incluindo itens ao pedido!");
-    pedidoDTO.setItemPedidoDTOs(itemPedidoUseCase.inserir(pedidoDTO.getItemPedidoDTOs()));
+    List<ItemPedidoDTO> itensPedidoSalvos =
+        itemPedidoUseCase.inserir(ItemPedidoMapper.toListItemPedidoDTO(pedido.getItens()));
+
+    List<ItemPedido> itensPedido = ItemPedidoMapper.toListDomainFromDTO(itensPedidoSalvos);
+
+    pedido.setItens(itensPedido);
 
     log.info("Calculando o valor do Pedido!");
-    pedidoDTO.setValorPedido(calcularValorTotalPedido(pedidoDTO.getItemPedidoDTOs()));
+    pedido.setValorPedido(calcularValorTotalPedido(pedido.getItens()));
 
     log.info("Gerando numero de pedido!");
-    pedidoDTO.setNumeroPedido(gerarNumeroPedido());
+    pedido.setNumeroPedido(gerarNumeroPedido());
 
     // pedidoDTO.toPedidoDTO(pedidoGateway.inserir(PedidoMapper.toDomain(pedidoDTO)));
-    Pedido pedido = pedidoGateway.inserir(PedidoMapper.toDomain(pedidoDTO));
-    log.info("{} salvo com sucesso!", pedidoDTO.toString());
+    pedido = pedidoGateway.inserir(pedido);
+    pedido.setItens(
+        ItemPedidoMapper.toListDomainFromDTO(itemPedidoUseCase.buscarItemPedido(pedido.getId())));
+    log.info("{} salvo com sucesso!", pedido.toString());
 
     try {
       pedidoPublisher.send(pedido);
@@ -169,12 +182,12 @@ public class PedidoUseCase {
     return lista;
   }
 
-  private BigDecimal calcularValorTotalPedido(List<ItemPedidoDTO> itemPedidoDTOs) {
+  private BigDecimal calcularValorTotalPedido(List<ItemPedido> itemPedidos) {
     BigDecimal valorPedido = BigDecimal.ZERO;
 
-    for (ItemPedidoDTO itemPedidoDTO : itemPedidoDTOs) {
-      valorPedido = valorPedido.add(itemPedidoDTO.getProdutoDTO().getPreco()
-          .multiply(new BigDecimal(itemPedidoDTO.getQuantidade())));
+    for (ItemPedido itemPedido : itemPedidos) {
+      valorPedido = valorPedido.add(
+          itemPedido.getProduto().getPreco().multiply(new BigDecimal(itemPedido.getQuantidade())));
     }
 
     log.info("Valor do Pedido: R$ {}", valorPedido);

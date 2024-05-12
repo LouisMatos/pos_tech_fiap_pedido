@@ -8,12 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import br.com.postechfiap.jlapppedido.domain.cliente.dto.ClienteDTO;
 import br.com.postechfiap.jlapppedido.domain.enums.Estado;
 import br.com.postechfiap.jlapppedido.domain.enums.StatusPagamento;
-import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 
 @Data
-@Builder
 public class PedidoDTO {
 
   private Long id;
@@ -36,7 +33,6 @@ public class PedidoDTO {
   @JsonProperty("cliente")
   private ClienteDTO clienteDTO;
 
-  @Default
   @JsonProperty("itens")
   private List<ItemPedidoDTO> itemPedidoDTOs = new ArrayList<>();
 
