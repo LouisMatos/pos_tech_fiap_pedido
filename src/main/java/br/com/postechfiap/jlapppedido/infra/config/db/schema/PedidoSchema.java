@@ -43,7 +43,7 @@ public class PedidoSchema implements Serializable {
   @JoinColumn(nullable = true, name = "id_cliente")
   private ClienteSchema clienteSchema;
 
-  @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER, mappedBy = "pedidoSchema")
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "pedidoSchema")
   private List<ItemPedidoSchema> itensPedidoSchema;
 
   @Enumerated
@@ -52,5 +52,7 @@ public class PedidoSchema implements Serializable {
   private LocalDateTime dataPedido;
 
   private BigDecimal valorPedido;
+
+  private boolean enviadoCozinha = false;
 
 }

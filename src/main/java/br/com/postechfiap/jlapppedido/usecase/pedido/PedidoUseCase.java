@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import br.com.postechfiap.jlapppedido.domain.cliente.mapper.ClienteMapper;
@@ -101,8 +102,9 @@ public class PedidoUseCase {
         ItemPedidoMapper.toListDomainFromDTO(itemPedidoUseCase.buscarItemPedido(pedido.getId())));
     log.info("{} salvo com sucesso!", pedido.toString());
 
+
     try {
-      pedidoPublisher.send(pedido);
+      pedidoPublisher.send(PedidoMapper.toEventoPedido(pedido));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
@@ -146,6 +148,7 @@ public class PedidoUseCase {
   }
 
   public PedidoDTO atualizar(PedidoDTO pedidoDTO, String numeroPedido) {
+
     this.buscaPedidoNumeroPedido(numeroPedido);
 
     log.info("Convertendo para o dominio de Pedido!");
@@ -153,6 +156,24 @@ public class PedidoUseCase {
 
     log.info("Atualizando o pedido de numero: {} !", numeroPedido);
     pedido.setNumeroPedido(numeroPedido);
+
+    PedidoDTO dto = PedidoMapper.toDTO(pedidoGateway.atualizar(pedido));
+    log.info("{} alterado com sucesso!", dto.toString());
+
+    return dto;
+
+  }
+
+  public PedidoDTO atualizarStatusPagamento(String numeroPedido, StatusPagamento statusPagamento) {
+
+    PedidoDTO pedidoDTO = this.buscaPedidoNumeroPedido(numeroPedido);
+
+    log.info("Convertendo para o dominio de Pedido!");
+    Pedido pedido = PedidoMapper.toDomain(pedidoDTO);
+
+    log.info("Atualizando o pedido de numero: {} !", numeroPedido);
+    pedido.setNumeroPedido(numeroPedido);
+    pedido.setStatusPagamento(statusPagamento);
 
     PedidoDTO dto = PedidoMapper.toDTO(pedidoGateway.atualizar(pedido));
     log.info("{} alterado com sucesso!", dto.toString());
@@ -180,6 +201,32 @@ public class PedidoUseCase {
         "Ordenando pedidos na seguinte ordem [Pronto > Em Preparação > Recebido] sendo pedidos mais antigos primeiro que os mais novos");
 
     return lista;
+  }
+
+  @Scheduled(fixedDelay = 30000)
+  public void processarPedidosPagos() {
+    List<PedidoDTO> pedidoDTOs = pedidoGateway.buscarTodos().stream().map(PedidoMapper::toDTO)
+        .filter(pedido -> pedido.getStatusPagamento() == StatusPagamento.APROVADO)
+        .filter(pedido -> pedido.getEstado() == Estado.RECEBIDO)
+        .filter(pedido -> pedido.isEnviadoCozinha() == false)
+        .peek(
+            pedido -> pedido.setItemPedidoDTOs(itemPedidoUseCase.buscarItemPedido(pedido.getId())))
+        .collect(Collectors.toList());
+
+    PedidoMapper.toEventoPedidoCozinha(pedidoDTOs).forEach(eventoPedidoCozinha -> {
+      try {
+        pedidoPublisher.sendPedidoCozinha(eventoPedidoCozinha);
+        log.info("Pedido: {} enviado para cozinha!", eventoPedidoCozinha.getNumeroPedido());
+        pedidoGateway.atualizarEnviadoCozinha(eventoPedidoCozinha.getId(), true);
+        log.info("Pedido: {} atualizado para enviado para cozinha!",
+            eventoPedidoCozinha.getNumeroPedido());
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
+    });
+
+
+
   }
 
   private BigDecimal calcularValorTotalPedido(List<ItemPedido> itemPedidos) {

@@ -36,4 +36,5 @@ public class PedidoDTO {
   @JsonProperty("itens")
   private List<ItemPedidoDTO> itemPedidoDTOs = new ArrayList<>();
 
+  private boolean enviadoCozinha;
 }

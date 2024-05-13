@@ -55,4 +55,15 @@ public class PedidoGateway implements IPedidoGateway {
     return PedidoMapper.toDomain(pedidoRepository.save(pedidoSchema));
   }
 
+  @Override
+  public void atualizarEnviadoCozinha(Long id, boolean enviadoCozinha) {
+    log.info("Atualizando pedido enviado para cozinha: {}!", id);
+    Optional<PedidoSchema> pedidoSchema = pedidoRepository.findById(id);
+
+    pedidoSchema.get().setEnviadoCozinha(enviadoCozinha);
+
+    pedidoRepository.save(pedidoSchema.get());
+
+  }
+
 }
