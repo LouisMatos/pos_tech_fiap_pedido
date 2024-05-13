@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import br.com.postechfiap.jlapppedido.domain.cliente.mapper.ClienteMapper;
@@ -200,6 +201,32 @@ public class PedidoUseCase {
         "Ordenando pedidos na seguinte ordem [Pronto > Em Preparação > Recebido] sendo pedidos mais antigos primeiro que os mais novos");
 
     return lista;
+  }
+
+  @Scheduled(fixedDelay = 30000)
+  public void processarPedidosPagos() {
+    List<PedidoDTO> pedidoDTOs = pedidoGateway.buscarTodos().stream().map(PedidoMapper::toDTO)
+        .filter(pedido -> pedido.getStatusPagamento() == StatusPagamento.APROVADO)
+        .filter(pedido -> pedido.getEstado() == Estado.RECEBIDO)
+        .filter(pedido -> pedido.isEnviadoCozinha() == false)
+        .peek(
+            pedido -> pedido.setItemPedidoDTOs(itemPedidoUseCase.buscarItemPedido(pedido.getId())))
+        .collect(Collectors.toList());
+
+    PedidoMapper.toEventoPedidoCozinha(pedidoDTOs).forEach(eventoPedidoCozinha -> {
+      try {
+        pedidoPublisher.sendPedidoCozinha(eventoPedidoCozinha);
+        log.info("Pedido: {} enviado para cozinha!", eventoPedidoCozinha.getNumeroPedido());
+        pedidoGateway.atualizarEnviadoCozinha(eventoPedidoCozinha.getId(), true);
+        log.info("Pedido: {} atualizado para enviado para cozinha!",
+            eventoPedidoCozinha.getNumeroPedido());
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
+    });
+
+
+
   }
 
   private BigDecimal calcularValorTotalPedido(List<ItemPedido> itemPedidos) {
