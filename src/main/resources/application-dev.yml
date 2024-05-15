@@ -74,12 +74,4 @@ spring:
 mq:
   queues:
     pedidos: pedidos-mq
-    statuspedidos: status-pedidos-mq
-    cozinha: cozinha-mq
-  exchanges:
-    direct: direct-exchange
-  routing:
-    key:
-      pedidos: pedidos-key
-      statuspedidos: status-pedidos-key
-      cozinha: cozinha-key
+    cliente: cliente-mq

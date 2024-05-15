@@ -22,17 +22,6 @@ public class ItemPedidoMapper {
     return itemPedidoList;
   }
 
-
-  public static List<ItemPedido> toListDomainFromDTO(List<ItemPedidoDTO> itensPedidoDTO) {
-    List<ItemPedido> itemPedidoList = new ArrayList<>();
-    for (ItemPedidoDTO dto : itensPedidoDTO) {
-      ItemPedido itemPedido = toDomain(dto);
-      itemPedidoList.add(itemPedido);
-    }
-    return itemPedidoList;
-  }
-
-
   public static List<ItemPedidoSchema> toListItensPedidoSchema(List<ItemPedido> itens) {
     List<ItemPedidoSchema> itemPedidoSchemaList = new ArrayList<>();
     for (ItemPedido item : itens) {
@@ -92,15 +81,5 @@ public class ItemPedidoMapper {
 
     return itemPedidoSchema;
   }
-
-  public static List<ItemPedidoDTO> toListItemPedidoDTO(List<ItemPedido> itens) {
-    List<ItemPedidoDTO> itemPedidoDTOList = new ArrayList<>();
-    for (ItemPedido item : itens) {
-      ItemPedidoDTO itemPedidoDTO = toDTO(item);
-      itemPedidoDTOList.add(itemPedidoDTO);
-    }
-    return itemPedidoDTOList;
-  }
-
 
 }

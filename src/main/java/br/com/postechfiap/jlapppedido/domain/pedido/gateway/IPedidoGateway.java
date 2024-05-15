@@ -16,6 +16,4 @@ public interface IPedidoGateway {
 
   public Pedido atualizar(Pedido pedido);
 
-  void atualizarEnviadoCozinha(Long id, boolean enviadoCozinha);
-
 }
