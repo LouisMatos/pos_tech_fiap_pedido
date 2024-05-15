@@ -164,7 +164,8 @@ public class PedidoUseCase {
 
   }
 
-  public PedidoDTO atualizarStatusPagamento(String numeroPedido, StatusPagamento statusPagamento) {
+  public PedidoDTO atualizarStatusPagamento(String numeroPedido, StatusPagamento statusPagamento,
+      Estado estado) {
 
     PedidoDTO pedidoDTO = this.buscaPedidoNumeroPedido(numeroPedido);
 
@@ -174,6 +175,7 @@ public class PedidoUseCase {
     log.info("Atualizando o pedido de numero: {} !", numeroPedido);
     pedido.setNumeroPedido(numeroPedido);
     pedido.setStatusPagamento(statusPagamento);
+    pedido.setEstado(estado);
 
     PedidoDTO dto = PedidoMapper.toDTO(pedidoGateway.atualizar(pedido));
     log.info("{} alterado com sucesso!", dto.toString());

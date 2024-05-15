@@ -30,8 +30,8 @@ public class StatusPagamentoPedidosSubscriber {
 
       EventoPedido pedido = mapper.readValue(message, EventoPedido.class);
       log.info("Pedido recebido da fila: {}", pedido);
-      peddidoUseCase.atualizarStatusPagamento(pedido.getNumeroPedido(),
-          pedido.getStatusPagamento());
+      peddidoUseCase.atualizarStatusPagamento(pedido.getNumeroPedido(), pedido.getStatusPagamento(),
+          pedido.getEstado());
 
     } catch (Exception e) {
       log.error("Erro ao processar a mensagem: {}", message, e);
