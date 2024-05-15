@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solicitacao-deployment
+spec:
+  selector:
+    matchLabels:
+      app: solicitacao
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: solicitacao
+    spec:
+      containers:
+      - name: solicitacao
+        image: jeff192/solicitacao:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 600m
+            memory: 756Mi
+          limits:
+            cpu: 1000m
+            memory: 1536Mi
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 25
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 35
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 20
+        env:
+          - name: JAVA_OPTS
+            value: "-server -Xmx1536M -Xms756M -Xss128m -XX:+UseParallelGC -XX:MaxRAMPercentage=75 -XX:ActiveProcessorCount=2 -XX:+UnlockExperimentalVMOptions"
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://postgres:5432/db_lanchonete
+          - name: SPRING_DATASOURCE_USERNAME
+            value: root
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: root

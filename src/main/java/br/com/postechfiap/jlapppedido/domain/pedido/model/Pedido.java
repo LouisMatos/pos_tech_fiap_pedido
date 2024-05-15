@@ -26,15 +26,12 @@ public class Pedido {
 
   private BigDecimal valorPedido;
 
-  private boolean enviadoCozinha;
-
   public Pedido() {
 
   }
 
   public Pedido(Long id, String numeroPedido, StatusPagamento statusPagamento, Cliente cliente,
-      List<ItemPedido> itens, Estado estado, LocalDateTime dataPedido, BigDecimal valorPedido,
-      boolean enviadoCozinha) {
+      List<ItemPedido> itens, Estado estado, LocalDateTime dataPedido, BigDecimal valorPedido) {
     this.id = id;
     this.numeroPedido = numeroPedido;
     this.statusPagamento = statusPagamento;
@@ -43,7 +40,6 @@ public class Pedido {
     this.estado = estado;
     this.dataPedido = dataPedido;
     this.valorPedido = valorPedido;
-    this.enviadoCozinha = enviadoCozinha;
   }
 
   public Cliente getCliente() {
@@ -110,20 +106,11 @@ public class Pedido {
     this.statusPagamento = statusPagamento;
   }
 
-  public boolean isEnviadoCozinha() {
-    return enviadoCozinha;
-  }
-
-  public void setEnviadoCozinha(boolean enviadoCozinha) {
-    this.enviadoCozinha = enviadoCozinha;
-  }
-
   @Override
   public String toString() {
     return "Pedido [id=" + id + ", numeroPedido=" + numeroPedido + ", statusPagamento="
         + statusPagamento + ", cliente=" + cliente + ", itens=" + itens + ", estado=" + estado
-        + ", dataPedido=" + dataPedido + ", valorPedido=" + valorPedido + ", enviadoCozinha="
-        + enviadoCozinha + "]";
+        + ", dataPedido=" + dataPedido + ", valorPedido=" + valorPedido + "]";
   }
 
 }
