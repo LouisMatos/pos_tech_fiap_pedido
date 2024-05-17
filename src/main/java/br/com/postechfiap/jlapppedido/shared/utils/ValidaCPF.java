@@ -3,7 +3,6 @@ package br.com.postechfiap.jlapppedido.shared.utils;
 public class ValidaCPF {
 
   private static final int[] pesoCPF = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2};
-  private static final int[] pesoCNPJ = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
 
   private ValidaCPF() {
 
@@ -26,15 +25,6 @@ public class ValidaCPF {
     Integer digito1 = calcularDigito(cpf.substring(0, 9), pesoCPF);
     Integer digito2 = calcularDigito(cpf.substring(0, 9) + digito1, pesoCPF);
     return cpf.equals(cpf.substring(0, 9) + digito1.toString() + digito2.toString());
-  }
-
-  public static boolean isValidCNPJ(String cnpj) {
-    if ((cnpj == null) || (cnpj.length() != 14))
-      return false;
-
-    Integer digito1 = calcularDigito(cnpj.substring(0, 12), pesoCNPJ);
-    Integer digito2 = calcularDigito(cnpj.substring(0, 12) + digito1, pesoCNPJ);
-    return cnpj.equals(cnpj.substring(0, 12) + digito1.toString() + digito2.toString());
   }
 
 }
