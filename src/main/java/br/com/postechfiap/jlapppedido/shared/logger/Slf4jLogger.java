@@ -9,19 +9,19 @@ import br.com.postechfiap.jlapppedido.shared.logger.log.Logger;
 
 public final class Slf4jLogger implements Logger {
 
-  private final org.slf4j.Logger logger;
+  public final org.slf4j.Logger logger;
 
   public Slf4jLogger(final InjectionPoint ip) {
     this.logger = LoggerFactory.getLogger(getClassName(ip));
   }
 
-  private String getClassName(final InjectionPoint ip) {
+  public String getClassName(final InjectionPoint ip) {
     return Optional.ofNullable(getMethodOrElseNull(ip.getMethodParameter()))
         .map(m -> m.getReturnType().getName())
         .orElseGet(() -> getMethodParameterOfDeclaredClass(ip));
   }
 
-  private Method getMethodOrElseNull(final MethodParameter methodParameter) {
+  public Method getMethodOrElseNull(final MethodParameter methodParameter) {
     try {
       return methodParameter.getMethod();
     } catch (Exception e) {
@@ -29,12 +29,12 @@ public final class Slf4jLogger implements Logger {
     }
   }
 
-  private String getMethodParameterOfDeclaredClass(final InjectionPoint ip) {
+  public String getMethodParameterOfDeclaredClass(final InjectionPoint ip) {
     return Optional.ofNullable(ip.getMethodParameter()).map(mp -> mp.getDeclaringClass().getName())
         .orElseGet(() -> getFieldParameterOfDeclaredClass(ip));
   }
 
-  private String getFieldParameterOfDeclaredClass(final InjectionPoint ip) {
+  public String getFieldParameterOfDeclaredClass(final InjectionPoint ip) {
     return Optional.ofNullable(ip.getField()).map(f -> f.getDeclaringClass().getName())
         .orElseThrow(IllegalArgumentException::new);
   }
