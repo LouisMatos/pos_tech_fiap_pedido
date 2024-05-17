@@ -50,7 +50,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t testeluismatos/jlapp-pedido-eks:latest .
-          docker push testeluismatos/jlapp-pedido:latest
+          docker push testeluismatos/jlapp-pedido-eks:latest
 
   deploy:
     if: github.ref == 'refs/heads/master'
