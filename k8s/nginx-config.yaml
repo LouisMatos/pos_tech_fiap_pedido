@@ -7,7 +7,7 @@ data:
     server {
       listen 80;
       listen [::]:80;
-      server_name jlapp-pedido;
+      server_name jlapp-nginx;
 
       proxy_http_version 1.1;
       proxy_set_header   Upgrade $http_upgrade;
@@ -19,11 +19,27 @@ data:
       proxy_set_header   X-Forwarded-Host $host;
       proxy_set_header   X-Forwarded-Port $server_port;
 
-      location / {
-        proxy_pass http://backend;
+      location /pagamento {
+        proxy_pass http://pagamento;
+      }
+      
+      location /pedido {
+        proxy_pass http://pedido;
+      }
+      
+      location /producao {
+        proxy_pass http://producao;
       }
     }
 
-    upstream backend {
+    upstream pagamento {
+      server jlapp-pagamento-service:8072;
+    }
+    
+    upstream pedido {
       server jlapp-pedido-service:8070;
+    }
+    
+    upstream producao {
+      server jlapp-producao-service:8074;
     }
