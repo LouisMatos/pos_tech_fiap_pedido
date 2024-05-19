@@ -18,15 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import br.com.postechfiap.jlapppedido.domain.categoria.model.Categoria;
-import br.com.postechfiap.jlapppedido.domain.cliente.dto.ClienteDTO;
 import br.com.postechfiap.jlapppedido.domain.cliente.model.Cliente;
 import br.com.postechfiap.jlapppedido.domain.enums.Estado;
 import br.com.postechfiap.jlapppedido.domain.enums.StatusPagamento;
-import br.com.postechfiap.jlapppedido.domain.pedido.dto.ItemPedidoDTO;
-import br.com.postechfiap.jlapppedido.domain.pedido.dto.PedidoDTO;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.ItemPedido;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.Pedido;
-import br.com.postechfiap.jlapppedido.domain.produto.dto.ProdutoDTO;
 import br.com.postechfiap.jlapppedido.domain.produto.model.Produto;
 import br.com.postechfiap.jlapppedido.infra.config.db.repository.PedidoRepository;
 import br.com.postechfiap.jlapppedido.infra.config.db.schema.CategoriaSchema;
@@ -112,45 +108,6 @@ public class PedidoGatewayTest {
     assertTrue(pedidoSchema.isEnviadoCozinha());
     verify(pedidoRepository, times(1)).findById(id);
     verify(pedidoRepository, times(1)).save(pedidoSchema);
-  }
-
-  private PedidoDTO createFakePedidoDTO() {
-    PedidoDTO pedidoDTO = new PedidoDTO();
-    pedidoDTO.setId(1L);
-    pedidoDTO.setNumeroPedido("123456");
-    pedidoDTO.setValorPedido(new BigDecimal("100.00"));
-    pedidoDTO.setStatusPagamento(StatusPagamento.APROVADO);
-    pedidoDTO.setEstado(Estado.RECEBIDO);
-    pedidoDTO.setDataPedido(LocalDateTime.parse("2024-05-16T08:47:35.446518200"));
-    pedidoDTO.setEnviadoCozinha(false);
-
-    ClienteDTO clienteDTO = new ClienteDTO();
-    clienteDTO.setId(1L);
-    clienteDTO.setCpf("123.456.789-00");
-    clienteDTO.setNome("Test User");
-    clienteDTO.setEmail("teste@teste.com");
-    pedidoDTO.setClienteDTO(clienteDTO);
-
-    ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO();
-    itemPedidoDTO.setId(1L);
-    itemPedidoDTO.setPedidoid(1L);
-    itemPedidoDTO.setQuantidade(1);
-    itemPedidoDTO.setObservacao("Test Observation");
-    pedidoDTO.setItemPedidoDTOs(Arrays.asList(itemPedidoDTO));
-
-    ProdutoDTO produtoDTO = new ProdutoDTO();
-    produtoDTO.setId(1L);
-    produtoDTO.setNome("Test Product");
-    produtoDTO.setDescricao("Test Description");
-    produtoDTO.setPreco(new BigDecimal("100.00"));
-    produtoDTO.setCategoriaId(1L);
-    produtoDTO.setCategoriaNome("Test Category");
-    produtoDTO.setImagens(Arrays.asList("image1", "image2"));
-    itemPedidoDTO.setProdutoDTO(produtoDTO);
-
-    pedidoDTO.setItemPedidoDTOs(Arrays.asList(itemPedidoDTO));
-
-    return pedidoDTO;
   }
 
   private Pedido createFakePedido() {
