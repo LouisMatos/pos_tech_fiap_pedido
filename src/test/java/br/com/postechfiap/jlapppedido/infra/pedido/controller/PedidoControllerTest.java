@@ -66,8 +66,7 @@ class PedidoControllerTest {
   @DisplayName("Should return order payment status")
   void shouldReturnOrderPaymentStatus() {
     String numero_pedido = "123";
-    StatusPedidoDTO statusPedidoDTO = StatusPedidoDTO.builder().numeroPedido(numero_pedido)
-        .statusPagamento(StatusPagamento.APROVADO).build();
+    StatusPedidoDTO statusPedidoDTO = new StatusPedidoDTO(numero_pedido, StatusPagamento.APROVADO);
     when(pedidoUseCase.buscarStatusPagamentoPedido(numero_pedido)).thenReturn(statusPedidoDTO);
 
     ResponseEntity<StatusPedidoDTO> result =
