@@ -114,6 +114,8 @@
 				</executions>
 				<configuration>
 					<excludes>
+						<exclude>br/com/postechfiap/jlapppedido/shared/filter/**</exclude>
+						<exclude>br/com/postechfiap/jlapppedido/shared/exception/**</exclude>
 						<exclude>br/com/postechfiap/jlapppedido/infra/config/db/repository/**</exclude>
 						<exclude>br/com/postechfiap/jlapppedido/shared/logger/**</exclude>
 						<exclude>br/com/postechfiap/jlapppedido/domain/enums/**</exclude>

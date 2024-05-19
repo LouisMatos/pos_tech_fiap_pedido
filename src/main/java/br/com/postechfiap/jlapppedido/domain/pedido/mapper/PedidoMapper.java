@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import br.com.postechfiap.jlapppedido.domain.cliente.mapper.ClienteMapper;
+import br.com.postechfiap.jlapppedido.domain.pedido.dto.PedidoAcompanhamentoDTO;
 import br.com.postechfiap.jlapppedido.domain.pedido.dto.PedidoDTO;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.EventoPedido;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.EventoPedidoCozinha;
@@ -190,6 +191,15 @@ public class PedidoMapper {
       e.printStackTrace();
     }
     return json;
+  }
+
+  public static PedidoAcompanhamentoDTO toPedidoAcompanhamento(PedidoDTO pedidoDTO) {
+    PedidoAcompanhamentoDTO pedidoAcompanhamentoDTO = new PedidoAcompanhamentoDTO();
+    pedidoAcompanhamentoDTO.setNumeroPedido(pedidoDTO.getNumeroPedido());
+    pedidoAcompanhamentoDTO.setEstado(pedidoDTO.getEstado());
+    pedidoAcompanhamentoDTO.setNomeCliente(pedidoDTO.getClienteDTO().getNome());
+    pedidoAcompanhamentoDTO.setDataPedido(pedidoDTO.getDataPedido());
+    return pedidoAcompanhamentoDTO;
   }
 
 }

@@ -135,8 +135,7 @@ public class PedidoUseCase {
 
     log.info("Pedido encontrado! {}", dto);
 
-    return StatusPedidoDTO.builder().numeroPedido(dto.getNumeroPedido())
-        .statusPagamento(dto.getStatusPagamento()).build();
+    return new StatusPedidoDTO(dto.getNumeroPedido(), dto.getStatusPagamento());
   }
 
   public PedidoDTO buscaPedidoNumeroPedido(String numeroPedido) {
@@ -189,9 +188,13 @@ public class PedidoUseCase {
     List<PedidoDTO> pedidoDTOs =
         pedidoGateway.buscarTodos().stream().map(pedido -> PedidoMapper.toDTO(pedido)).toList();
 
+
     List<PedidoAcompanhamentoDTO> lista = pedidoDTOs.stream()
-        .map(pedido -> new PedidoAcompanhamentoDTO().toPedidoAcompanhamento(pedido))
-        .collect((Collectors.toList()));
+        .map(pedido -> PedidoMapper.toPedidoAcompanhamento(pedido)).collect(Collectors.toList());
+
+    // List<PedidoAcompanhamentoDTO> lista = pedidoDTOs.stream()
+    // .map(pedido -> new PedidoAcompanhamentoDTO().toPedidoAcompanhamento(pedido))
+    // .collect((Collectors.toList()));
     log.info("Convertendo para o dominio de Acompanhamento de pedido!");
 
     lista.removeIf(t -> t.getEstado().estaFinalizado());
