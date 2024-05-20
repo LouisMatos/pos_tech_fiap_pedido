@@ -10,5 +10,5 @@ Cobertura de testes:
 ![image](https://github.com/LouisMatos/pos_tech_fiap_pedido/assets/40615923/f8145908-bc83-41cf-ac5c-1415c80b31f7)
 
 
-Cobertura de 82% no microsserviço de Pagamento utilizando o JaCoCo.
+Cobertura de 82% no microsserviço de Pedido utilizando o JaCoCo.
 
