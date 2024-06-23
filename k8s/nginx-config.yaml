@@ -5,9 +5,9 @@ metadata:
 data:
   nginx.conf: |
     server {
-      listen 80;
-      listen [::]:80;
-      server_name jlapp-nginx;
+      listen 8072;
+      listen [::]:8072;
+      server_name jlapp-pagamento;
 
       proxy_http_version 1.1;
       proxy_set_header   Upgrade $http_upgrade;
@@ -19,15 +19,48 @@ data:
       proxy_set_header   X-Forwarded-Host $host;
       proxy_set_header   X-Forwarded-Port $server_port;
 
-      location /pagamento {
+      location / {
         proxy_pass http://pagamento;
       }
       
-      location /pedido {
+    }
+
+    server {
+      listen 8070;
+      listen [::]:8070;
+      server_name jlapp-pedido;
+
+      proxy_http_version 1.1;
+      proxy_set_header   Upgrade $http_upgrade;
+      proxy_set_header   Connection "";
+      proxy_set_header   Host $host;
+      proxy_set_header   X-Real-IP $remote_addr;
+      proxy_set_header   X-Forwarded-For $remote_addr;
+      proxy_set_header   X-Forwarded-Proto $scheme;
+      proxy_set_header   X-Forwarded-Host $host;
+      proxy_set_header   X-Forwarded-Port $server_port;
+
+      location / {
         proxy_pass http://pedido;
       }
-      
-      location /producao {
+    }
+
+    server {
+      listen 8074;
+      listen [::]:8074;
+      server_name jlapp-producao;
+
+      proxy_http_version 1.1;
+      proxy_set_header   Upgrade $http_upgrade;
+      proxy_set_header   Connection "";
+      proxy_set_header   Host $host;
+      proxy_set_header   X-Real-IP $remote_addr;
+      proxy_set_header   X-Forwarded-For $remote_addr;
+      proxy_set_header   X-Forwarded-Proto $scheme;
+      proxy_set_header   X-Forwarded-Host $host;
+      proxy_set_header   X-Forwarded-Port $server_port;
+
+      location / {
         proxy_pass http://producao;
       }
     }

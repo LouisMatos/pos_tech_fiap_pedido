@@ -7,5 +7,15 @@ spec:
     app: nginx
   ports:
   - protocol: TCP
-    port: 80
-    targetPort: 80
+    name: pedido
+    port: 8070
+    targetPort: 8070
+  - protocol: TCP
+    name: pagamento
+    port: 8072
+    targetPort: 8072
+  - protocol: TCP
+    name: producao
+    port: 8074
+    targetPort: 8074
+  type: LoadBalancer
