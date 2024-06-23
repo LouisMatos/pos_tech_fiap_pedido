@@ -10,8 +10,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: jlapp-pedido-deployment
-  targetCPUUtilizationPercentage: 65
+  targetCPUUtilizationPercentage: 80
 status:
   currentReplicas: 2
-  desiredReplicas: 0
+  desiredReplicas: 2
  
