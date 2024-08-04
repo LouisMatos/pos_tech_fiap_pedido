@@ -1,6 +1,5 @@
 package br.com.postechfiap.jlapppedido.shared.exception;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +14,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
 
-  @Autowired
-  private Logger log;
+  private final Logger log;
+
+  public ResourceExceptionHandler(Logger log) {
+    this.log = log;
+  }
 
   @ExceptionHandler(BadRequestException.class)
   public ResponseEntity<StandardError> badRequestException(BadRequestException e,

@@ -2,7 +2,6 @@ package br.com.postechfiap.jlapppedido.infra.pedido.gateway;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import br.com.postechfiap.jlapppedido.domain.pedido.gateway.IPedidoGateway;
 import br.com.postechfiap.jlapppedido.domain.pedido.mapper.PedidoMapper;
@@ -14,11 +13,14 @@ import br.com.postechfiap.jlapppedido.shared.logger.log.Logger;
 @Component
 public class PedidoGateway implements IPedidoGateway {
 
-  @Autowired
-  private PedidoRepository pedidoRepository;
+  private final PedidoRepository pedidoRepository;
 
-  @Autowired
-  private Logger log;
+  private final Logger log;
+
+  public PedidoGateway(PedidoRepository pedidoRepository, Logger log) {
+    this.pedidoRepository = pedidoRepository;
+    this.log = log;
+  }
 
   @Override
   public Pedido inserir(Pedido pedido) {
@@ -31,21 +33,21 @@ public class PedidoGateway implements IPedidoGateway {
   public List<Pedido> buscarTodos() {
     log.info("Buscando todos os pedidos cadastrados na base de dados!");
     List<PedidoSchema> pedidoSchemas = pedidoRepository.findAll();
-    return pedidoSchemas.stream().map(schema -> PedidoMapper.toDomain(schema)).toList();
+    return pedidoSchemas.stream().map(PedidoMapper::toDomain).toList();
   }
 
   @Override
-  public Optional<Pedido> buscarStatusPagamentoPedido(String numero_pedido) {
-    log.info("Buscando o pedido: {} na base de dados!", numero_pedido);
-    Optional<PedidoSchema> pedidoSchema = pedidoRepository.findByNumeroPedido(numero_pedido);
-    return pedidoSchema.map(schema -> PedidoMapper.toDomain(schema));
+  public Optional<Pedido> buscarStatusPagamentoPedido(String numeroPedido) {
+    log.info("Buscando o pedido: {} na base de dados!", numeroPedido);
+    Optional<PedidoSchema> pedidoSchema = pedidoRepository.findByNumeroPedido(numeroPedido);
+    return pedidoSchema.map(PedidoMapper::toDomain);
   }
 
   @Override
-  public Optional<Pedido> buscaPedidoNumeroPedido(String numero_pedido) {
-    log.info("Buscando o pedido: {} na base de dados!", numero_pedido);
-    Optional<PedidoSchema> pedidoSchema = pedidoRepository.findByNumeroPedido(numero_pedido);
-    return pedidoSchema.map(schema -> PedidoMapper.toDomain(schema));
+  public Optional<Pedido> buscaPedidoNumeroPedido(String numeroPedido) {
+    log.info("Buscando o pedido: {} na base de dados!", numeroPedido);
+    Optional<PedidoSchema> pedidoSchema = pedidoRepository.findByNumeroPedido(numeroPedido);
+    return pedidoSchema.map(PedidoMapper::toDomain);
   }
 
   @Override

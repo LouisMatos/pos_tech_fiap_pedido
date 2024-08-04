@@ -150,7 +150,6 @@ class ProdutoUseCaseTest {
     categoria.setId(1L);
     categoria.setNome("Categoria Teste");
     categoria.setDescricao("Descrição da categoria teste");
-    // categoria.setProdutos(Arrays.asList(produto));
     produto.setCategoria(categoria);
 
     return produto;

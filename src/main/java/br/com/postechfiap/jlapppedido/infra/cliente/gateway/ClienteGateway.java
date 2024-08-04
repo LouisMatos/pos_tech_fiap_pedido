@@ -1,7 +1,6 @@
 package br.com.postechfiap.jlapppedido.infra.cliente.gateway;
 
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import br.com.postechfiap.jlapppedido.domain.cliente.gateway.IClienteGateway;
 import br.com.postechfiap.jlapppedido.domain.cliente.mapper.ClienteMapper;
@@ -14,11 +13,14 @@ import br.com.postechfiap.jlapppedido.shared.logger.log.Logger;
 @Component
 public class ClienteGateway implements IClienteGateway {
 
-  @Autowired
-  private ClienteRepository clienteRepository;
+  private final ClienteRepository clienteRepository;
 
-  @Autowired
-  private Logger log;
+  private final Logger log;
+
+  public ClienteGateway(ClienteRepository clienteRepository, Logger log) {
+    this.clienteRepository = clienteRepository;
+    this.log = log;
+  }
 
   @Override
   public Cliente inserir(Cliente cliente) {
@@ -40,7 +42,7 @@ public class ClienteGateway implements IClienteGateway {
   public Optional<Cliente> buscarClientePorCpf(String cpf) {
     log.info("Buscando cliente com o cpf {} na base de dados!", cpf);
     Optional<ClienteSchema> clienteSchema = clienteRepository.findByCpf(cpf);
-    return clienteSchema.map(schema -> ClienteMapper.toDomain(schema));
+    return clienteSchema.map(ClienteMapper::toDomain);
   }
 
 }

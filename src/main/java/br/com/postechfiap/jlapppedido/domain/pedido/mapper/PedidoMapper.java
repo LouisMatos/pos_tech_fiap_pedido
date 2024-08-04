@@ -36,7 +36,7 @@ public class PedidoMapper {
 
   public static List<Pedido> toListDomain(List<PedidoSchema> pedidosSchema) {
     if (pedidosSchema == null || pedidosSchema.isEmpty()) {
-      return null;
+      return Collections.emptyList();
     }
 
     return pedidosSchema.stream().map(pedidoSchema -> {
@@ -60,7 +60,7 @@ public class PedidoMapper {
 
   public static List<PedidoSchema> toListPedidoSchema(List<Pedido> pedidos) {
     if (pedidos == null || pedidos.isEmpty()) {
-      return null;
+      return Collections.emptyList();
     }
 
     return pedidos.stream().map(pedido -> {
@@ -82,7 +82,7 @@ public class PedidoMapper {
 
   public static List<PedidoDTO> toListPedidoDTO(List<Pedido> pedidos) {
     if (pedidos == null || pedidos.isEmpty()) {
-      return null;
+      return Collections.emptyList();
     }
 
     return pedidos.stream().map(PedidoMapper::toDTO).collect(Collectors.toList());

@@ -8,6 +8,6 @@ import br.com.postechfiap.jlapppedido.infra.config.db.schema.PedidoSchema;
 @Repository
 public interface PedidoRepository extends JpaRepository<PedidoSchema, Long> {
 
-  Optional<PedidoSchema> findByNumeroPedido(String numero_pedido);
+  Optional<PedidoSchema> findByNumeroPedido(String numeroPedido);
 
 }

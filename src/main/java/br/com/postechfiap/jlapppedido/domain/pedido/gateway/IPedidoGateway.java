@@ -10,7 +10,7 @@ public interface IPedidoGateway {
 
   public List<Pedido> buscarTodos();
 
-  public Optional<Pedido> buscarStatusPagamentoPedido(String numero_pedido);
+  public Optional<Pedido> buscarStatusPagamentoPedido(String numeroPedido);
 
   public Optional<Pedido> buscaPedidoNumeroPedido(String numeroPedido);
 

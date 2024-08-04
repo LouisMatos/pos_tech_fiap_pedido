@@ -24,17 +24,17 @@ public class ItemPedidoUseCase {
   public List<ItemPedidoDTO> inserir(List<ItemPedidoDTO> dtos) {
     log.info("Convertendo para o dominio de Item Pedido!");
     List<ItemPedido> itemPedidos =
-        itemPedidoGateway.inserir(dtos.stream().map(it -> ItemPedidoMapper.toDomain(it)).toList());
+        itemPedidoGateway.inserir(dtos.stream().map(ItemPedidoMapper::toDomain).toList());
 
     log.info("{} salvos com sucesso!", itemPedidos);
-    return itemPedidos.stream().map(it -> ItemPedidoMapper.toDTO(it)).toList();
+    return itemPedidos.stream().map(ItemPedidoMapper::toDTO).toList();
   }
 
   public List<ItemPedidoDTO> buscarItemPedido(Long idPedido) {
     List<ItemPedido> itemPedidos = itemPedidoGateway.buscarItemPedido(idPedido);
 
     log.info("Itens Pedido com o pedido ID: {} encontrados {} !", idPedido, itemPedidos);
-    return itemPedidos.stream().map(it -> ItemPedidoMapper.toDTO(it)).toList();
+    return itemPedidos.stream().map(ItemPedidoMapper::toDTO).toList();
 
   }
 

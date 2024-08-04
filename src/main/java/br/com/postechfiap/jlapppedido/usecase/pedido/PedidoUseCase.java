@@ -19,6 +19,7 @@ import br.com.postechfiap.jlapppedido.domain.pedido.dto.StatusPedidoDTO;
 import br.com.postechfiap.jlapppedido.domain.pedido.gateway.IPedidoGateway;
 import br.com.postechfiap.jlapppedido.domain.pedido.mapper.ItemPedidoMapper;
 import br.com.postechfiap.jlapppedido.domain.pedido.mapper.PedidoMapper;
+import br.com.postechfiap.jlapppedido.domain.pedido.model.EventoPedidoCozinha;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.ItemPedido;
 import br.com.postechfiap.jlapppedido.domain.pedido.model.Pedido;
 import br.com.postechfiap.jlapppedido.domain.produto.mapper.ProdutoMapper;
@@ -96,7 +97,6 @@ public class PedidoUseCase {
     log.info("Gerando numero de pedido!");
     pedido.setNumeroPedido(gerarNumeroPedido());
 
-    // pedidoDTO.toPedidoDTO(pedidoGateway.inserir(PedidoMapper.toDomain(pedidoDTO)));
     pedido = pedidoGateway.inserir(pedido);
     pedido.setItens(
         ItemPedidoMapper.toListDomainFromDTO(itemPedidoUseCase.buscarItemPedido(pedido.getId())));
@@ -116,7 +116,7 @@ public class PedidoUseCase {
 
   public List<PedidoDTO> buscarTodos() {
     List<PedidoDTO> pedidoDTOs =
-        pedidoGateway.buscarTodos().stream().map(pedido -> PedidoMapper.toDTO(pedido)).toList();
+        pedidoGateway.buscarTodos().stream().map(PedidoMapper::toDTO).toList();
 
     for (int i = 0; i < pedidoDTOs.size(); i++) {
       pedidoDTOs.get(i)
@@ -127,11 +127,11 @@ public class PedidoUseCase {
     return pedidoDTOs;
   }
 
-  public StatusPedidoDTO buscarStatusPagamentoPedido(String numero_pedido) {
+  public StatusPedidoDTO buscarStatusPagamentoPedido(String numeroPedido) {
 
     PedidoDTO dto =
-        PedidoMapper.toDTO(pedidoGateway.buscarStatusPagamentoPedido(numero_pedido).orElseThrow(
-            () -> new NotFoundException("Pedido: " + numero_pedido + " não foi encontrado!")));
+        PedidoMapper.toDTO(pedidoGateway.buscarStatusPagamentoPedido(numeroPedido).orElseThrow(
+            () -> new NotFoundException("Pedido: " + numeroPedido + " não foi encontrado!")));
 
     log.info("Pedido encontrado! {}", dto);
 
@@ -186,15 +186,13 @@ public class PedidoUseCase {
   public List<PedidoAcompanhamentoDTO> buscarPedidosAcompanhamento() {
 
     List<PedidoDTO> pedidoDTOs =
-        pedidoGateway.buscarTodos().stream().map(pedido -> PedidoMapper.toDTO(pedido)).toList();
+        pedidoGateway.buscarTodos().stream().map(PedidoMapper::toDTO).toList();
 
 
-    List<PedidoAcompanhamentoDTO> lista = pedidoDTOs.stream()
-        .map(pedido -> PedidoMapper.toPedidoAcompanhamento(pedido)).collect(Collectors.toList());
+    List<PedidoAcompanhamentoDTO> lista =
+        pedidoDTOs.stream().map(PedidoMapper::toPedidoAcompanhamento).collect(Collectors.toList());
 
-    // List<PedidoAcompanhamentoDTO> lista = pedidoDTOs.stream()
-    // .map(pedido -> new PedidoAcompanhamentoDTO().toPedidoAcompanhamento(pedido))
-    // .collect((Collectors.toList()));
+
     log.info("Convertendo para o dominio de Acompanhamento de pedido!");
 
     lista.removeIf(t -> t.getEstado().estaFinalizado());
@@ -210,28 +208,38 @@ public class PedidoUseCase {
 
   @Scheduled(fixedDelay = 30000)
   public void processarPedidosPagos() {
-    List<PedidoDTO> pedidoDTOs = pedidoGateway.buscarTodos().stream().map(PedidoMapper::toDTO)
-        .filter(pedido -> pedido.getStatusPagamento() == StatusPagamento.APROVADO)
-        .filter(pedido -> pedido.getEstado() == Estado.RECEBIDO)
-        .filter(pedido -> pedido.isEnviadoCozinha() == false)
+    List<PedidoDTO> pedidos = buscarPedidosParaProcessamento();
+    enviarPedidosParaCozinha(pedidos);
+  }
+
+  private List<PedidoDTO> buscarPedidosParaProcessamento() {
+    return pedidoGateway.buscarTodos().stream().map(PedidoMapper::toDTO)
+        .filter(this::deveProcessarPedido)
         .peek(
             pedido -> pedido.setItemPedidoDTOs(itemPedidoUseCase.buscarItemPedido(pedido.getId())))
         .collect(Collectors.toList());
+  }
 
-    PedidoMapper.toEventoPedidoCozinha(pedidoDTOs).forEach(eventoPedidoCozinha -> {
-      try {
-        pedidoPublisher.sendPedidoCozinha(eventoPedidoCozinha);
-        log.info("Pedido: {} enviado para cozinha!", eventoPedidoCozinha.getNumeroPedido());
-        pedidoGateway.atualizarEnviadoCozinha(eventoPedidoCozinha.getId(), true);
-        log.info("Pedido: {} atualizado para enviado para cozinha!",
-            eventoPedidoCozinha.getNumeroPedido());
-      } catch (JsonProcessingException e) {
-        e.printStackTrace();
-      }
-    });
+  private boolean deveProcessarPedido(PedidoDTO pedido) {
+    return pedido.getStatusPagamento() == StatusPagamento.APROVADO
+        && pedido.getEstado() == Estado.RECEBIDO && !pedido.isEnviadoCozinha();
+  }
 
+  private void enviarPedidosParaCozinha(List<PedidoDTO> pedidos) {
+    pedidos.stream().map(PedidoMapper::toEventoPedidoCozinha)
+        .forEach(this::enviarPedidoParaCozinha);
+  }
 
-
+  private void enviarPedidoParaCozinha(EventoPedidoCozinha eventoPedidoCozinha) {
+    try {
+      pedidoPublisher.sendPedidoCozinha(eventoPedidoCozinha);
+      log.info("Pedido: {} enviado para cozinha!", eventoPedidoCozinha.getNumeroPedido());
+      pedidoGateway.atualizarEnviadoCozinha(eventoPedidoCozinha.getId(), true);
+      log.info("Pedido: {} atualizado para enviado para cozinha!",
+          eventoPedidoCozinha.getNumeroPedido());
+    } catch (JsonProcessingException e) {
+      log.error("Erro ao enviar pedido para cozinha", e);
+    }
   }
 
   private BigDecimal calcularValorTotalPedido(List<ItemPedido> itemPedidos) {

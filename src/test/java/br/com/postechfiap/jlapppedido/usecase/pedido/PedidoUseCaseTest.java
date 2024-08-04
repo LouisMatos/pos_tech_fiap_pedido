@@ -43,7 +43,7 @@ import br.com.postechfiap.jlapppedido.shared.logger.log.Logger;
 import br.com.postechfiap.jlapppedido.usecase.cliente.ClienteUseCase;
 import br.com.postechfiap.jlapppedido.usecase.produto.ProdutoUseCase;
 
-public class PedidoUseCaseTest {
+class PedidoUseCaseTest {
 
   @InjectMocks
   private PedidoUseCase pedidoUseCase;
@@ -67,12 +67,12 @@ public class PedidoUseCaseTest {
   private PedidoPublisher pedidoPublisher;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     MockitoAnnotations.openMocks(this);
   }
 
   @Test
-  public void buscarTodosReturnsAllPedidos() {
+  void buscarTodosReturnsAllPedidos() {
     Pedido pedido1 = new Pedido();
     Pedido pedido2 = new Pedido();
     when(pedidoGateway.buscarTodos()).thenReturn(Arrays.asList(pedido1, pedido2));
@@ -85,7 +85,7 @@ public class PedidoUseCaseTest {
   }
 
   @Test
-  public void buscarTodosReturnsEmptyListWhenNoPedidos() {
+  void buscarTodosReturnsEmptyListWhenNoPedidos() {
     when(pedidoGateway.buscarTodos()).thenReturn(Collections.emptyList());
 
     List<PedidoDTO> result = pedidoUseCase.buscarTodos();
@@ -96,7 +96,7 @@ public class PedidoUseCaseTest {
   }
 
   @Test
-  public void buscarStatusPagamentoPedidoReturnsStatusWhenPedidoExists() {
+  void buscarStatusPagamentoPedidoReturnsStatusWhenPedidoExists() {
     String numero_pedido = "123456";
     Pedido pedido = new Pedido();
     pedido.setNumeroPedido(numero_pedido);
@@ -109,7 +109,7 @@ public class PedidoUseCaseTest {
   }
 
   @Test
-  public void buscarStatusPagamentoPedidoThrowsExceptionWhenPedidoDoesNotExist() {
+  void buscarStatusPagamentoPedidoThrowsExceptionWhenPedidoDoesNotExist() {
     String numero_pedido = "123456";
     when(pedidoGateway.buscarStatusPagamentoPedido(numero_pedido)).thenReturn(Optional.empty());
 
@@ -119,7 +119,7 @@ public class PedidoUseCaseTest {
   }
 
   @Test
-  public void inserirReturnsPedidoWhenValid() {
+  void inserirReturnsPedidoWhenValid() {
     PedidoDTO pedidoDTO = createFakePedidoDTO();
     Pedido pedido = createFakePedido();
     when(pedidoGateway.inserir(any())).thenReturn(pedido);
@@ -128,9 +128,6 @@ public class PedidoUseCaseTest {
     when(itemPedidoUseCase.inserir(any())).thenReturn(pedidoDTO.getItemPedidoDTOs());
     when(itemPedidoUseCase.buscarItemPedido(any())).thenReturn(pedidoDTO.getItemPedidoDTOs());
 
-    PedidoDTO result = pedidoUseCase.inserir(pedidoDTO);
-
-    // assertEquals(pedidoDTO, result);
     verify(pedidoGateway, times(2)).inserir(any());
     verify(clienteUseCase, times(1)).buscarClientePorCpf(any());
     verify(produtoUseCase, times(pedidoDTO.getItemPedidoDTOs().size())).buscarProdutoPorId(any());
@@ -138,7 +135,7 @@ public class PedidoUseCaseTest {
   }
 
   @Test
-  public void inserirReturnsPedidoWithoutClienteWhenCpfIsBlank() {
+  void inserirReturnsPedidoWithoutClienteWhenCpfIsBlank() {
     PedidoDTO pedidoDTO = createFakePedidoDTO();
     pedidoDTO.getClienteDTO().setCpf("");
     Pedido pedido = createFakePedido();
@@ -149,9 +146,6 @@ public class PedidoUseCaseTest {
     when(itemPedidoUseCase.inserir(any())).thenReturn(pedidoDTO.getItemPedidoDTOs());
     when(itemPedidoUseCase.buscarItemPedido(any())).thenReturn(pedidoDTO.getItemPedidoDTOs());
 
-    PedidoDTO result = pedidoUseCase.inserir(pedidoDTO);
-
-    // assertEquals(pedidoDTO, result);
     verify(pedidoGateway, times(2)).inserir(any());
     verify(clienteUseCase, times(0)).buscarClientePorCpf(any());
     verify(produtoUseCase, times(pedidoDTO.getItemPedidoDTOs().size())).buscarProdutoPorId(any());

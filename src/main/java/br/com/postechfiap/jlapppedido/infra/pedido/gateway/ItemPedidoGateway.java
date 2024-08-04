@@ -2,7 +2,6 @@ package br.com.postechfiap.jlapppedido.infra.pedido.gateway;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import br.com.postechfiap.jlapppedido.domain.pedido.gateway.IItemPedidoGateway;
 import br.com.postechfiap.jlapppedido.domain.pedido.mapper.ItemPedidoMapper;
@@ -14,11 +13,14 @@ import br.com.postechfiap.jlapppedido.shared.logger.log.Logger;
 @Component
 public class ItemPedidoGateway implements IItemPedidoGateway {
 
-  @Autowired
-  private ItemPedidoRepository itemPedidoRepository;
+  private final ItemPedidoRepository itemPedidoRepository;
 
-  @Autowired
-  private Logger log;
+  private final Logger log;
+
+  public ItemPedidoGateway(ItemPedidoRepository itemPedidoRepository, Logger log) {
+    this.itemPedidoRepository = itemPedidoRepository;
+    this.log = log;
+  }
 
   @Override
   public List<ItemPedido> inserir(List<ItemPedido> itemPedidos) {
@@ -31,7 +33,7 @@ public class ItemPedidoGateway implements IItemPedidoGateway {
           .add(itemPedidoRepository.save(ItemPedidoMapper.toItemPedidoSchema(itemPedido)));
     }
 
-    return itemPedidoSchemas.stream().map(it -> ItemPedidoMapper.toDomain(it)).toList();
+    return itemPedidoSchemas.stream().map(ItemPedidoMapper::toDomain).toList();
 
   }
 
@@ -41,7 +43,7 @@ public class ItemPedidoGateway implements IItemPedidoGateway {
     log.info("Buscando item pedido com o ID: {} na base de dados!", idPedido);
     List<ItemPedidoSchema> itemPedidoSchemas = itemPedidoRepository.findAllByPedidoid(idPedido);
 
-    return itemPedidoSchemas.stream().map(it -> ItemPedidoMapper.toDomain(it)).toList();
+    return itemPedidoSchemas.stream().map(ItemPedidoMapper::toDomain).toList();
   }
 
 }

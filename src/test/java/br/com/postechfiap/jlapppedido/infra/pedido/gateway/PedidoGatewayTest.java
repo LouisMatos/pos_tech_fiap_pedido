@@ -32,7 +32,7 @@ import br.com.postechfiap.jlapppedido.infra.config.db.schema.PedidoSchema;
 import br.com.postechfiap.jlapppedido.infra.config.db.schema.ProdutoSchema;
 import br.com.postechfiap.jlapppedido.shared.logger.log.Logger;
 
-public class PedidoGatewayTest {
+class PedidoGatewayTest {
 
   @InjectMocks
   private PedidoGateway pedidoGateway;
@@ -50,7 +50,7 @@ public class PedidoGatewayTest {
 
 
   @Test
-  public void shouldInsertNewPedido() {
+  void shouldInsertNewPedido() {
     Pedido pedido = createFakePedido();
     PedidoSchema pedidoSchema = createFakePedidoSchema();
     when(pedidoRepository.save(any(PedidoSchema.class))).thenReturn(pedidoSchema);
@@ -62,7 +62,7 @@ public class PedidoGatewayTest {
   }
 
   @Test
-  public void shouldReturnAllPedidos() {
+  void shouldReturnAllPedidos() {
     List<PedidoSchema> pedidoSchemas = List.of(createFakePedidoSchema());
     when(pedidoRepository.findAll()).thenReturn(pedidoSchemas);
 
@@ -73,7 +73,7 @@ public class PedidoGatewayTest {
   }
 
   @Test
-  public void shouldReturnPedidoByNumeroPedido() {
+  void shouldReturnPedidoByNumeroPedido() {
     String numero_pedido = "123";
     Optional<PedidoSchema> pedidoSchema = Optional.of(createFakePedidoSchema());
     when(pedidoRepository.findByNumeroPedido(numero_pedido)).thenReturn(pedidoSchema);
@@ -85,7 +85,7 @@ public class PedidoGatewayTest {
   }
 
   @Test
-  public void shouldUpdatePedido() {
+  void shouldUpdatePedido() {
     Pedido pedido = createFakePedido();
     PedidoSchema pedidoSchema = createFakePedidoSchema();
     when(pedidoRepository.save(any(PedidoSchema.class))).thenReturn(pedidoSchema);
@@ -97,7 +97,7 @@ public class PedidoGatewayTest {
   }
 
   @Test
-  public void shouldUpdateEnviadoCozinha() {
+  void shouldUpdateEnviadoCozinha() {
     Long id = 1L;
     PedidoSchema pedidoSchema = new PedidoSchema();
     pedidoSchema.setEnviadoCozinha(false);
@@ -151,7 +151,7 @@ public class PedidoGatewayTest {
   }
 
 
-  public PedidoSchema createFakePedidoSchema() {
+  PedidoSchema createFakePedidoSchema() {
     PedidoSchema pedidoSchema = new PedidoSchema();
     pedidoSchema.setId(1L);
     pedidoSchema.setNumeroPedido("123456");

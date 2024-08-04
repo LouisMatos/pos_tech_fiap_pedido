@@ -3,7 +3,6 @@ package br.com.postechfiap.jlapppedido.infra.produto.gateway;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import br.com.postechfiap.jlapppedido.domain.categoria.model.Categoria;
 import br.com.postechfiap.jlapppedido.domain.produto.gateway.IProdutoGateway;
@@ -16,11 +15,14 @@ import br.com.postechfiap.jlapppedido.shared.logger.log.Logger;
 @Component
 public class ProdutoGateway implements IProdutoGateway {
 
-  @Autowired
-  private ProdutoRepository produtoRepository;
+  private final ProdutoRepository produtoRepository;
 
-  @Autowired
-  private Logger log;
+  private final Logger log;
+
+  public ProdutoGateway(ProdutoRepository produtoRepository, Logger log) {
+    this.produtoRepository = produtoRepository;
+    this.log = log;
+  }
 
   @Override
   public Produto inserir(Produto produto) {
@@ -46,15 +48,14 @@ public class ProdutoGateway implements IProdutoGateway {
   public List<Produto> buscarTodosProdutos() {
     log.info("Buscando todos os produtos cadastrados na base de dados!");
     List<ProdutoSchema> produtoSchemas = produtoRepository.findAll();
-    return produtoSchemas.stream().map(schema -> ProdutoMapper.toDomain(schema))
-        .collect(Collectors.toList());
+    return produtoSchemas.stream().map(ProdutoMapper::toDomain).collect(Collectors.toList());
   }
 
   @Override
   public Optional<Produto> buscarProdutoPorId(Long id) {
     log.info("Buscando produto com o ID: {} na base de dados!", id);
     Optional<ProdutoSchema> produtoSchema = produtoRepository.findById(id);
-    return produtoSchema.map(schema -> ProdutoMapper.toDomain(schema));
+    return produtoSchema.map(ProdutoMapper::toDomain);
   }
 
   @Override
@@ -63,14 +64,14 @@ public class ProdutoGateway implements IProdutoGateway {
         categoria.getNome());
     List<ProdutoSchema> produtoSchema =
         produtoRepository.findCategoriaEntityById(categoria.getId());
-    return produtoSchema.stream().map(schema -> ProdutoMapper.toDomain(schema)).toList();
+    return produtoSchema.stream().map(ProdutoMapper::toDomain).toList();
   }
 
   @Override
   public List<Produto> buscarProdutosPorCategoria(Long categoriaId) {
     log.info("Buscando produto com o ID: {} na base de dados!", categoriaId);
     List<ProdutoSchema> produtoSchema = produtoRepository.findCategoriaEntityById(categoriaId);
-    return produtoSchema.stream().map(schema -> ProdutoMapper.toDomain(schema)).toList();
+    return produtoSchema.stream().map(ProdutoMapper::toDomain).toList();
   }
 
 }

@@ -7,30 +7,30 @@ public enum Estado {
   PRONTO(3), //
   FINALIZADO(4); //
 
-  private int estado;
+  private int nomeEstado;
 
   Estado(int estado) {
-    this.estado = estado;
+    this.nomeEstado = estado;
   }
 
   public boolean foiRecebido() {
-    return RECEBIDO.getValorEstado() == this.estado;
+    return RECEBIDO.getValorEstado() == this.nomeEstado;
   }
 
   public boolean estaEmPreparacao() {
-    return EM_PREPARACAO.getValorEstado() == this.estado;
+    return EM_PREPARACAO.getValorEstado() == this.nomeEstado;
   }
 
   public boolean estaPronto() {
-    return PRONTO.getValorEstado() == this.estado;
+    return PRONTO.getValorEstado() == this.nomeEstado;
   }
 
   public boolean estaFinalizado() {
-    return FINALIZADO.getValorEstado() == this.estado;
+    return FINALIZADO.getValorEstado() == this.nomeEstado;
   }
 
   public int getValorEstado() {
-    return this.estado;
+    return this.nomeEstado;
   }
 
 }

@@ -83,7 +83,7 @@ public class ProdutoUseCase {
       throw new UnprocessableEntityException("Nenhum produto cadastrado!");
     }
     log.info("Produtos encontrados! {}", produtos);
-    return produtos.stream().map(produto -> ProdutoMapper.toDTO(produto)).toList();
+    return produtos.stream().map(ProdutoMapper::toDTO).toList();
   }
 
   public ProdutoDTO buscarProdutoPorId(Long id) {
@@ -105,7 +105,7 @@ public class ProdutoUseCase {
     }
 
     log.info("Produtos com a categoria ID: {} encontrados {} !", categoriaId, produtos);
-    return produtos.stream().map(produto -> ProdutoMapper.toDTO(produto)).toList();
+    return produtos.stream().map(ProdutoMapper::toDTO).toList();
   }
 
 }
