@@ -43,4 +43,11 @@ public class ClienteGateway implements IClienteGateway {
     return clienteSchema.map(schema -> ClienteMapper.toDomain(schema));
   }
 
+
+  @Override
+  public void deletar(Cliente cliente) {
+    log.info("Deletando cliente com o cpf {} na base de dados!", cliente.getCpf());
+    clienteRepository.delete(ClienteMapper.toClienteSchema(cliente));
+  }
+
 }

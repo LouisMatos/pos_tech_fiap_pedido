@@ -2,6 +2,7 @@ package br.com.postechfiap.jlapppedido.usecase.cliente;
 
 import org.springframework.stereotype.Service;
 import br.com.postechfiap.jlapppedido.domain.cliente.dto.ClienteDTO;
+import br.com.postechfiap.jlapppedido.domain.cliente.dto.ClienteExclusaoDTO;
 import br.com.postechfiap.jlapppedido.domain.cliente.gateway.IClienteGateway;
 import br.com.postechfiap.jlapppedido.domain.cliente.mapper.ClienteMapper;
 import br.com.postechfiap.jlapppedido.domain.cliente.model.Cliente;
@@ -48,6 +49,16 @@ public class ClienteUseCase {
     if (!ValidaCPF.isValidCPF(cpf)) {
       throw new BadRequestException("CPF " + cpf + " não é valido!");
     }
+  }
+
+  public void deletarClientePorCpf(String cpf, ClienteExclusaoDTO clienteExclus) {
+    validaCpf(cpf);
+
+    log.info("Deletando cliente com o cpf {}", cpf);
+
+    Cliente cliente = ClienteMapper.toDomain(buscarClientePorCpf(cpf));
+
+    clienteGateway.deletar(cliente);
   }
 
 }

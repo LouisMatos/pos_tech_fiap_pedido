@@ -113,7 +113,9 @@ public class PedidoMapper {
   public static PedidoSchema toPedidoSchema(Pedido pedido) {
     PedidoSchema pedidoSchema = new PedidoSchema();
     pedidoSchema.setId(pedido.getId());
-    pedidoSchema.setClienteSchema(ClienteMapper.toClienteSchema(pedido.getCliente()));
+    if (pedido.getCliente() != null) {
+      pedidoSchema.setClienteSchema(ClienteMapper.toClienteSchema(pedido.getCliente()));
+    }
     pedidoSchema.setDataPedido(pedido.getDataPedido());
     pedidoSchema.setEstado(pedido.getEstado());
     pedidoSchema.setItensPedidoSchema(ItemPedidoMapper.toListItensPedidoSchema(pedido.getItens()));
