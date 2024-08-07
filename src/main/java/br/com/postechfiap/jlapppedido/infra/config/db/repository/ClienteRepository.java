@@ -10,4 +10,6 @@ public interface ClienteRepository extends JpaRepository<ClienteSchema, Long> {
 
   Optional<ClienteSchema> findByCpf(String cpf);
 
+  void deleteByCpf(String cpf);
+
 }

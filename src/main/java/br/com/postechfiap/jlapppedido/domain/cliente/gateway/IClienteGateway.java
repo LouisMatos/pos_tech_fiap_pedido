@@ -9,4 +9,6 @@ public interface IClienteGateway {
 
   public Optional<Cliente> buscarClientePorCpf(String cpf);
 
+  public void deletar(Cliente cliente);
+
 }
