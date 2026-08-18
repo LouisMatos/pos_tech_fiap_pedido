@@ -12,10 +12,10 @@ spec:
       labels:
         app: jlapp-pedido
     spec:
+      serviceAccountName: pedido-sa
       containers:
       - name: jlapp-pedido
-        image: testeluismatos/jlapp-pedido-eks:latest
-#        imagePullPolicy: Never
+        image: jlapp-pedido
         ports:
         - containerPort: 8070
         resources:
@@ -45,16 +45,16 @@ spec:
           - name: JAVA_OPTS
             value: "-server -Xmx1024M -Xms512M -Xss128m -XX:+UseParallelGC -XX:MaxRAMPercentage=75 -XX:ActiveProcessorCount=2 -XX:+UnlockExperimentalVMOptions"
           - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://postgres:5432/db_lanchonete
+            valueFrom: { secretKeyRef: { name: pedido-db-secret, key: url } }
           - name: SPRING_DATASOURCE_USERNAME
-            value: root
+            valueFrom: { secretKeyRef: { name: pedido-db-secret, key: username } }
           - name: SPRING_DATASOURCE_PASSWORD
-            value: root
+            valueFrom: { secretKeyRef: { name: pedido-db-secret, key: password } }
           - name: SPRING_RABBITMQ_HOST
-            value: rabbitmq-deployment
+            valueFrom: { secretKeyRef: { name: shared-mq-secret, key: host } }
           - name: SPRING_RABBITMQ_PORT
-            value: "5672"
+            value: "5671"
           - name: SPRING_RABBITMQ_USERNAME
-            value: luis
+            valueFrom: { secretKeyRef: { name: shared-mq-secret, key: username } }
           - name: SPRING_RABBITMQ_PASSWORD
-            value: teste123
+            valueFrom: { secretKeyRef: { name: shared-mq-secret, key: password } }
