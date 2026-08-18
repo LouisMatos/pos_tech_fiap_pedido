@@ -19,8 +19,9 @@ public class ValidaCPF {
   }
 
   public static boolean isValidCPF(String cpf) {
-    if ((cpf == null) || (cpf.length() != 11))
+    if ((cpf == null) || (cpf.length() != 11)) {
       return false;
+    }
 
     Integer digito1 = calcularDigito(cpf.substring(0, 9), pesoCPF);
     Integer digito2 = calcularDigito(cpf.substring(0, 9) + digito1, pesoCPF);
