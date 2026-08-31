@@ -1,0 +1,47 @@
+# group.name compartilhado com pagamento/producao via IngressClassParams
+# (repo pos_tech_fiap_terraform/k8s-bootstrap/ingressclass.yaml) funde os 3
+# Ingresses num unico ALB. Paths reais dos controllers (@RequestMapping) sao
+# disjuntos entre os 3 servicos - sem rewrite-target, sem context-path.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jlapp-pedido-ingress
+  annotations:
+    alb.ingress.kubernetes.io/group.order: "10"
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-path: /actuator/health/readiness
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "15"
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "5"
+    alb.ingress.kubernetes.io/healthy-threshold-count: "2"
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
+    alb.ingress.kubernetes.io/success-codes: "200"
+    alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
+spec:
+  ingressClassName: alb-jlapp
+  rules:
+    - http:
+        paths:
+          - path: /api/v1/pedidos
+            pathType: Prefix
+            backend:
+              service:
+                name: jlapp-pedido-service
+                port:
+                  number: 8070
+          - path: /api/v1/produtos
+            pathType: Prefix
+            backend:
+              service:
+                name: jlapp-pedido-service
+                port:
+                  number: 8070
+          - path: /api/v1/clientes
+            pathType: Prefix
+            backend:
+              service:
+                name: jlapp-pedido-service
+                port:
+                  number: 8070
