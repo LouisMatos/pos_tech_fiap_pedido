@@ -5,11 +5,14 @@ WORKDIR /app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
-COPY src src
 
 RUN chmod +x mvnw \
     && sed -i 's/\r$//' mvnw \
-    && ./mvnw package -DskipTests dependency:resolve
+    && ./mvnw -q dependency:go-offline
+
+COPY src src
+
+RUN ./mvnw -q package -DskipTests
 
 FROM eclipse-temurin:21-jre AS runtime
 

@@ -54,8 +54,8 @@ spec:
             port: 8070
           periodSeconds: 20
         env:
-          - name: JAVA_OPTS
-            value: "-server -Xmx1024M -Xms512M -Xss128m -XX:+UseParallelGC -XX:MaxRAMPercentage=75 -XX:ActiveProcessorCount=2 -XX:+UnlockExperimentalVMOptions"
+          - name: JAVA_TOOL_OPTIONS
+            value: "-XX:MaxRAMPercentage=75 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xshare:auto"
           - name: SPRING_DATASOURCE_URL
             valueFrom: { secretKeyRef: { name: pedido-db-secret, key: url } }
           - name: SPRING_DATASOURCE_USERNAME

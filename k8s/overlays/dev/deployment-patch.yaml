@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jlapp-pedido-deployment
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    spec:
+      containers:
+      - name: jlapp-pedido
+        resources:
+          requests:
+            cpu: 100m
+            memory: 320Mi
+          limits:
+            cpu: 1000m
+            memory: 640Mi
+        env:
+        # RabbitMQ do dev roda no cluster, sem TLS (host/porta vêm do shared-mq-secret)
+        - name: SPRING_RABBITMQ_SSL_ENABLED
+          value: "false"
