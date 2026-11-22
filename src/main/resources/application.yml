@@ -2,23 +2,30 @@ server:
   port: 8070
   forward-headers-strategy: native
   use-forward-headers: true
+  shutdown: graceful
 
 spring:
   profiles:
     active: ${APP_PROFILE:dev}
   devtools:
     add-properties: false
-  main: 
+  main:
     allow-circular-references: true
+  lifecycle:
+    timeout-per-shutdown-phase: 25s
 
 
-management: 
+management:
   security:
     enabled: false
+  endpoint:
+    health:
+      probes:
+        enabled: true
   endpoints:
     web:
-      exposure: 
-        include: '*'
+      exposure:
+        include: health,info,prometheus
   health:
     show-details: always
 
