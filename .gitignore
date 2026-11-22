@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Agentes de IA (arquivos pessoais)
+CLAUDE.local.md
+AGENTS.local.md
+.claude/settings.local.json
+.claude/worktrees/

@@ -15,11 +15,11 @@ FROM eclipse-temurin:21-jre AS runtime
 
 WORKDIR /app
 
-RUN groupadd --system --gid 1000 appuser \
-    && useradd --system --uid 1000 --gid appuser appuser
+RUN groupadd --system appuser \
+    && useradd --system --gid appuser appuser
 
 COPY --from=build /app/target/jlapp-pedido-0.0.1-SNAPSHOT.jar app.jar
 
-USER 1000:1000
+USER appuser
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
