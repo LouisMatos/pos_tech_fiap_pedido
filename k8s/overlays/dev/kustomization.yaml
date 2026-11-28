@@ -6,6 +6,16 @@ resources:
 
 patches:
   - path: service-account-patch.yaml
+  - path: deployment-patch.yaml
+  - target:
+      kind: Deployment
+      name: jlapp-pedido-deployment
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SPRING_PROFILES_ACTIVE
+          value: dev
   - target:
       kind: Deployment
       name: jlapp-pedido-deployment

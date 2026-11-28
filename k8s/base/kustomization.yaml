@@ -6,17 +6,8 @@ resources:
   - jlapp-service.yaml
   - service-account.yaml
   - hpa.yaml
-  - nginx-config.yaml
-  - nginx-deployment.yaml
-  - nginx-service.yaml
-  - DB/configmap.yaml
-  - DB/postgres-deployment.yaml
-  - DB/postgres-pv.yaml
-  - DB/postgres-pvc.yaml
-  - DB/postgres-service.yaml
-  - mq/rabbitmq-deployment.yaml
-  - mq/rabbitmq-service.yaml
-  - Metrics/components.yaml
+  - pdb.yaml
+  - ingress.yaml
 
 images:
   - name: jlapp-pedido

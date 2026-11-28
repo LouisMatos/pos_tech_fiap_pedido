@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./target/**)",
+      "Bash(kubectl:*)",
+      "Bash(aws:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)"
+    ],
+    "allow": [
+      "Bash(./mvnw -q:*)",
+      "Bash(./mvnw test:*)",
+      "Bash(./mvnw verify:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ]
+  }
+}
